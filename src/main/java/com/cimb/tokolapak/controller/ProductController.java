@@ -13,18 +13,24 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.cimb.tokolapak.dao.ProductRepo;
 import com.cimb.tokolapak.entity.Product;
+import com.cimb.tokolapak.service.ProductService;
 
 @RestController
 public class ProductController {
 	@Autowired
 	private ProductRepo productRepo;
+	
+	@Autowired
+	private ProductService productService;
+	
 	@GetMapping("/products")
 	public Iterable<Product> getProducts() {
-		return productRepo.findAll();
+		return productService.getProducts();
 	}
+	
 	@GetMapping("/products/{id}")
 	public Optional<Product> getProductById(@PathVariable int id) {
-		return productRepo.findById(id);
+		return productService.getProductById(id);
 	}
 	
 	@GetMapping("/productName/{productName}")
@@ -34,22 +40,18 @@ public class ProductController {
 	
 	@PostMapping("/products")
 	public Product addProduct(@RequestBody Product product) {
-		product.setId(0);
-		return productRepo.save(product);
+
+		return productService.addProduct(product);
 	}
 	
 	@DeleteMapping("/product/{id}")
 	public void deleteProductById(@PathVariable int id) {
-		Optional <Product> product = this.productRepo.findById(id);
-		this.productRepo.deleteById(id);
+		
+		productService.deleteProductById(id);
 	}
 	
 	@PutMapping("/products")
 	public Product updateProduct(@RequestBody Product product) {
-		Optional<Product> findProduct = productRepo.findById(product.getId());
-		if(findProduct.toString()=="Optional.empty") {
-			throw new RuntimeException("Product Not Found");
-		}
-		return productRepo.save(product);
+		return productService.updateProduct(product);
 	}
 }
