@@ -1,5 +1,6 @@
 package com.cimb.tokolapak.service.impl;
 
+import com.cimb.tokolapak.entity.Employee;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -23,6 +24,11 @@ public class EmployeeServiceImpl implements EmployeeService {
 		employeeAddress.setEmployee(null); // putuskan hubungan dari address ke employee
 		
 		employeeAddressRepo.delete(employeeAddress);
+	}
+
+	@Override
+	public Employee addEmployeeWithAddress (Employee employee){
+		return employeeRepo.save(employee);
 	}
 	
 }

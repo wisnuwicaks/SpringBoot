@@ -27,96 +27,116 @@ import com.cimb.tokolapak.service.EmployeeService;
 @RequestMapping("/employees")
 @CrossOrigin
 public class EmployeeController {
-	
-	@Autowired
-	private EmployeeRepo employeeRepo;
-	
-	@Autowired
-	private EmployeeService employeeService;
-	
-	@Autowired
-	private EmployeeAddressRepo employeeAddressRepo;
-	
-	@Autowired
-	private DepartmentRepo departmentRepo;
-	
-	@Autowired
-	private ProjectRepo projectRepo;
-	
-	@PostMapping("/department/{departmentId}")
-	public Employee addEmployee(@RequestBody Employee employee, @PathVariable int departmentId) {
-		Department findDepartment = departmentRepo.findById(departmentId).get();
-		
-		if (findDepartment == null)
-			throw new RuntimeException("Department not found");
-		
-		employee.setDepartment(findDepartment);
-		
-		return employeeRepo.save(employee);
-	}
-	
-	@PostMapping("/{employeeId}/projects/{projectId}")
-	public Employee addProjectToEmployee(@PathVariable int employeeId, @PathVariable int projectId) {
-		Employee findEmployee = employeeRepo.findById(employeeId).get();
-		
-		Project findProject = projectRepo.findById(projectId).get();
-		
-		findEmployee.getProjects().add(findProject);
-		
-		return employeeRepo.save(findEmployee);
-	}
-	
-	@GetMapping
-	public Iterable<Employee> getEmployees() {
-		return employeeRepo.findAll();
-	}
-	
-	@PutMapping("/{employeeId}/address")
-	public Employee addAddressToEmployee(@RequestBody EmployeeAddress employeeAddress, @PathVariable int employeeId) {
-		Employee findEmployee = employeeRepo.findById(employeeId).get();
-		
-		if (findEmployee == null)
-			throw new RuntimeException("Employee not found");
-		
-		findEmployee.setEmployeeAddress(employeeAddress);
-		
-		return employeeRepo.save(findEmployee); 
-	}
-	
-	@DeleteMapping("/address/{id}")
-	public void deleteEmployeeAddressById(@PathVariable int id) {
-		Optional<EmployeeAddress> employeeAddress = employeeAddressRepo.findById(id);
-		
-		if (employeeAddress.get() == null)
-			throw new RuntimeException("Employee address not found");
-		
-		employeeService.deleteEmployeeAddress(employeeAddress.get());
-	}
-	
-	@PutMapping("/{employeeId}/department/{departmentId}")
-	public Employee addEmployeeToDepartment(@PathVariable int departmentId, @PathVariable int employeeId) {
-		// Employee didapatkan dari ID yang kita kirim ({employeeId})
-		Employee findEmployee = employeeRepo.findById(employeeId).get(); 
-		
-		// Jika tidak ada employee dengan ID tsbt, throw error
-		if (findEmployee == null)
-			throw new RuntimeException("Employee not found");
-		
-		Department findDepartment = departmentRepo.findById(departmentId).get();
-			
-		if (findDepartment == null)
-			throw new RuntimeException("Department not found");
-		
-		findEmployee.setDepartment(findDepartment);
-		
-		return employeeRepo.save(findEmployee);
-		
-		// 1. Carikan department yang memiliki ID = {departmentId}
-		// 2. Lalu gunakan method map, yang akan mendapatkan sebuah parameter "department"
-		// 3. "department" akan berisi Department yang memiliki ID = {departmentId} (point nomor 1)
-		// 4. Lalu, set field department si employee dengan department yang kita dapatkan dari parameter map ("department")
-		// 5. Save employee nya
-	}
-	
-	
+
+    @Autowired
+    private EmployeeRepo employeeRepo;
+
+    @Autowired
+    private EmployeeService employeeService;
+
+    @Autowired
+    private EmployeeAddressRepo employeeAddressRepo;
+
+    @Autowired
+    private DepartmentRepo departmentRepo;
+
+    @Autowired
+    private ProjectRepo projectRepo;
+
+    @PostMapping("/addEmployeeAddress")
+    public Employee addEmployeeAddress(@RequestBody Employee employee){
+        return employeeService.addEmployeeWithAddress(employee);
+    }
+
+
+    @PostMapping("/department/{departmentId}")
+    public Employee addEmployee(@RequestBody Employee employee, @PathVariable int departmentId) {
+        Department findDepartment = departmentRepo.findById(departmentId).get();
+
+        if (findDepartment == null)
+            throw new RuntimeException("Department not found");
+
+        employee.setDepartment(findDepartment);
+
+        return employeeRepo.save(employee);
+    }
+
+    @PostMapping("/{employeeId}/projects/{projectId}")
+    public Employee addProjectToEmployee(@PathVariable int employeeId, @PathVariable int projectId) {
+        Employee findEmployee = employeeRepo.findById(employeeId).get();
+
+        Project findProject = projectRepo.findById(projectId).get();
+
+        findEmployee.getProjects().add(findProject);
+
+        return employeeRepo.save(findEmployee);
+    }
+
+    @GetMapping
+    public Iterable<Employee> getEmployees() {
+        return employeeRepo.findAll();
+    }
+
+    @PutMapping("/{employeeId}/address")
+    public Employee addAddressToEmployee(@RequestBody EmployeeAddress employeeAddress, @PathVariable int employeeId) {
+        Employee findEmployee = employeeRepo.findById(employeeId).get();
+
+        if (findEmployee == null)
+            throw new RuntimeException("Employee not found");
+
+        findEmployee.setEmployeeAddress(employeeAddress);
+
+        return employeeRepo.save(findEmployee);
+    }
+
+    @PutMapping("/{employeeId}/address/{addressId}")
+    public Employee addAddressAvailableToEmployee(@PathVariable int employeeId, @PathVariable int addressId) {
+        Employee findEmployee = employeeRepo.findById(employeeId).get();
+        EmployeeAddress findEmployeeAddress = employeeAddressRepo.findById(addressId).get();
+        if (findEmployee == null)
+            throw new RuntimeException("Employee not found");
+        if (findEmployeeAddress == null)
+            throw new RuntimeException("Address not found");
+
+        findEmployee.setEmployeeAddress(findEmployeeAddress);
+
+        return employeeRepo.save(findEmployee);
+    }
+
+    @DeleteMapping("/address/{id}")
+    public void deleteEmployeeAddressById(@PathVariable int id) {
+        Optional<EmployeeAddress> employeeAddress = employeeAddressRepo.findById(id);
+
+        if (employeeAddress.get() == null)
+            throw new RuntimeException("Employee address not found");
+
+        employeeService.deleteEmployeeAddress(employeeAddress.get());
+    }
+
+    @PutMapping("/{employeeId}/department/{departmentId}")
+    public Employee addEmployeeToDepartment(@PathVariable int departmentId, @PathVariable int employeeId) {
+        // Employee didapatkan dari ID yang kita kirim ({employeeId})
+        Employee findEmployee = employeeRepo.findById(employeeId).get();
+
+        // Jika tidak ada employee dengan ID tsbt, throw error
+        if (findEmployee == null)
+            throw new RuntimeException("Employee not found");
+
+        Department findDepartment = departmentRepo.findById(departmentId).get();
+
+        if (findDepartment == null)
+            throw new RuntimeException("Department not found");
+
+        findEmployee.setDepartment(findDepartment);
+
+        return employeeRepo.save(findEmployee);
+
+        // 1. Carikan department yang memiliki ID = {departmentId}
+        // 2. Lalu gunakan method map, yang akan mendapatkan sebuah parameter "department"
+        // 3. "department" akan berisi Department yang memiliki ID = {departmentId} (point nomor 1)
+        // 4. Lalu, set field department si employee dengan department yang kita dapatkan dari parameter map ("department")
+        // 5. Save employee nya
+    }
+
+
 }

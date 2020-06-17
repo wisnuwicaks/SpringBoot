@@ -3,14 +3,7 @@ package com.cimb.tokolapak.controller;
 import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.CrossOrigin;
-import org.springframework.web.bind.annotation.DeleteMapping;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.PutMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import com.cimb.tokolapak.dao.EmployeeRepo;
 import com.cimb.tokolapak.dao.ProductRepo;
@@ -24,10 +17,10 @@ public class ProductController {
 	
 	// Controller -> Service -> DAO / Repo -> DB
 	
-//	Axios.post(API_URL, {
-//		productName: "",
-//		price: 25000
-//	})
+	//	Axios.post(API_URL, {
+	//		productName: "",
+	//		price: 25000
+	//	})
 	
 	// localhost:8080
 	// const API_URL = localhost:8080
@@ -73,6 +66,11 @@ public class ProductController {
 	@GetMapping("/productName/{productName}")
 	public Product getProductByProductName(@PathVariable String productName) {
 		return productRepo.findByProductName(productName);
+	}
+
+	@GetMapping("products/custom")
+	public Iterable<Product> customQueryGet(@RequestParam double maxPrice, @RequestParam String productName) {
+		return productRepo.findProductByMaxPrice(maxPrice, productName);
 	}
 	
 }
