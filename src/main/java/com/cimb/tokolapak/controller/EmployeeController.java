@@ -22,6 +22,7 @@ import com.cimb.tokolapak.entity.Employee;
 import com.cimb.tokolapak.entity.EmployeeAddress;
 import com.cimb.tokolapak.entity.Project;
 import com.cimb.tokolapak.service.EmployeeService;
+import com.cimb.tokolapak.util.EmailUtil;
 
 @RestController
 @RequestMapping("/employees")
@@ -43,11 +44,8 @@ public class EmployeeController {
     @Autowired
     private ProjectRepo projectRepo;
 
-    @PostMapping("/addEmployeeAddress")
-    public Employee addEmployeeAddress(@RequestBody Employee employee){
-        return employeeService.addEmployeeWithAddress(employee);
-    }
-
+    @Autowired
+    private EmailUtil emailUtil;
 
     @PostMapping("/department/{departmentId}")
     public Employee addEmployee(@RequestBody Employee employee, @PathVariable int departmentId) {
@@ -57,6 +55,8 @@ public class EmployeeController {
             throw new RuntimeException("Department not found");
 
         employee.setDepartment(findDepartment);
+
+        emailUtil.sendEmail(employee.getEmail(), "Registrasi Karyawan", "<h1>Selamat!</h1>\n Anda telah bergabung bersama kami!\n Klik <a href=\"http://localhost:8080/products\">link</a> ini untuk verifikasi email anda ");
 
         return employeeRepo.save(employee);
     }
@@ -85,20 +85,6 @@ public class EmployeeController {
             throw new RuntimeException("Employee not found");
 
         findEmployee.setEmployeeAddress(employeeAddress);
-
-        return employeeRepo.save(findEmployee);
-    }
-
-    @PutMapping("/{employeeId}/address/{addressId}")
-    public Employee addAddressAvailableToEmployee(@PathVariable int employeeId, @PathVariable int addressId) {
-        Employee findEmployee = employeeRepo.findById(employeeId).get();
-        EmployeeAddress findEmployeeAddress = employeeAddressRepo.findById(addressId).get();
-        if (findEmployee == null)
-            throw new RuntimeException("Employee not found");
-        if (findEmployeeAddress == null)
-            throw new RuntimeException("Address not found");
-
-        findEmployee.setEmployeeAddress(findEmployeeAddress);
 
         return employeeRepo.save(findEmployee);
     }

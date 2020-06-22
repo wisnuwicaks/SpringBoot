@@ -30,21 +30,29 @@ public class Employee {
 	private String employeeName;
 	private String email;
 	private String phoneNumber;
-	
+
+	//hubungan employee dan address adalah one to one
 	@OneToOne(cascade = CascadeType.ALL) // CascadeType.ALL
 	@JoinColumn(name = "employee_address_id")
 	private EmployeeAddress employeeAddress;
-	
+	//================================================//
+
+
+	//hubungan employee dan department adalah many to one
 	@ManyToOne(cascade = { CascadeType.DETACH, CascadeType.MERGE, CascadeType.PERSIST, CascadeType.REFRESH })
 	@JoinColumn(name = "department_id")
 	private Department department;
-	
+	//================================================//
+
+	//hubungan employee dan project adalah many to many
 	@ManyToMany(fetch = FetchType.LAZY, cascade = { CascadeType.DETACH, CascadeType.MERGE, CascadeType.PERSIST,
 			CascadeType.REFRESH })
 	@JoinTable(name = "project_employee", joinColumns = @JoinColumn(name = "employee_id"),
 			inverseJoinColumns = @JoinColumn(name = "project_id"))
 	private List<Project> projects;
-	
+	//================================================//
+
+
 	public Department getDepartment() {
 		return department;
 	}

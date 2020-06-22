@@ -15,19 +15,6 @@ import com.cimb.tokolapak.service.ProductService;
 @CrossOrigin
 public class ProductController {
 	
-	// Controller -> Service -> DAO / Repo -> DB
-	
-	//	Axios.post(API_URL, {
-	//		productName: "",
-	//		price: 25000
-	//	})
-	
-	// localhost:8080
-	// const API_URL = localhost:8080
-	// Axios.post(API_URL + "/products")
-	
-	// localhost:8080/products
-	
 	@Autowired
 	private ProductRepo productRepo;
 	

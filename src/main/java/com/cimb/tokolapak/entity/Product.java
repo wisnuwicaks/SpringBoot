@@ -6,7 +6,7 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 
 @Entity
-// @Table(name = "produk") // Customize table name
+// @Table(name = "products") // Customize table name
 public class Product {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY) // GenerationType.IDENTITY
